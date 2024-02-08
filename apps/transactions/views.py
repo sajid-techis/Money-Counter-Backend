@@ -15,6 +15,7 @@ from django.db.models.functions import Concat
 from config.helpers.error_response import error_response
 from datetime import timedelta
 from dateutil.relativedelta import relativedelta
+from django.http import QueryDict
 
 class TransactionAdd(CustomLoginRequiredMixin, generics.CreateAPIView):
     queryset = Transaction.objects.all()
@@ -29,7 +30,8 @@ class TransactionAdd(CustomLoginRequiredMixin, generics.CreateAPIView):
         if (category is None):
             return error_response('Category not found.', status.HTTP_400_BAD_REQUEST)
 
-        request.data._mutable = True
+        mutable_data = QueryDict(mutable=True)
+        mutable_data.update(request.data)
         request.data['user'] = request.login_user.id
         request.data['category'] = category.id
 
@@ -59,7 +61,8 @@ class TransactionUpdate(CustomLoginRequiredMixin, generics.UpdateAPIView):
         if (category is None):
             return error_response('Category not found.', status.HTTP_400_BAD_REQUEST)
 
-        request.data._mutable = True
+        mutable_data = QueryDict(mutable=True)
+        mutable_data.update(request.data)
         request.data['user'] = request.login_user.id
         request.data['category'] = category.id
 
